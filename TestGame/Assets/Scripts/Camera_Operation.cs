@@ -6,15 +6,16 @@ using UnityEngine;
 public class Camera_Operation : MonoBehaviour
 {
     public GameObject CCollider;
+    public GameObject UI1;
+    public GameObject UI2;
     BoxCollider2D CameraCollider;
     private Camera mainCamera;
     Transform ct;
     private float CameraSize;
 
-    private bool hit_overmap_UP;
-    private bool hit_overmap_DOWN;
-    private bool hit_overmap_RIGHT;
-    private bool hit_overmap_LEFT;
+    private bool ZoomIn;
+    private bool ZoomOut;
+    public float ZoomPct;
 
     // Start is called before the first frame update
     void Start()
@@ -22,106 +23,103 @@ public class Camera_Operation : MonoBehaviour
         mainCamera = Camera.main;
         ct = this.gameObject.GetComponent<Transform>();
         CameraSize = mainCamera.orthographicSize;
-        //CameraCollider = CCollider.GetComponent<BoxCollider2D>();
-        Debug.Log(CCollider.GetComponent<BoxCollider2D>().size);
-    }
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "overmapUP")
-        {
-            Debug.Log("UPhit");
-            hit_overmap_UP = true;
-        }
-        else
-        {
-            hit_overmap_UP = false;
-        }
-        if (collision.gameObject.tag == "overmapDOWN")
-        {
-            Debug.Log("DOWNhit");
-            hit_overmap_DOWN = true;
-        }
-        else
-        {
-            hit_overmap_DOWN= false;
-        }
-        if (collision.gameObject.tag == "overmapRIGHT")
-        {
-            Debug.Log("RIGHThit");
-            hit_overmap_RIGHT = true;
-        }
-        else
-        {
-            hit_overmap_RIGHT= false;
-        }
-        if (collision.gameObject.tag == "overmapLEFT")
-        {
-            Debug.Log("LEFThit");
-            hit_overmap_LEFT = true;
-        }
-        else
-        {
-            hit_overmap_LEFT = false;
-        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        var scroll = Input.mouseScrollDelta.y * Time.deltaTime * 100;
-        //Debug.Log(scroll);
-
-        if (mainCamera.orthographicSize < 56.6)
+        //カメラのズーム関係
         {
-            if (mainCamera.orthographicSize > 0)
+            if (Input.GetKeyDown(KeyCode.X) && !ZoomIn)
             {
-                mainCamera.orthographicSize += scroll;
-                CCollider.GetComponent<BoxCollider2D>().size += new Vector2(scroll * 2, scroll * 2);
+                ZoomIn = true;
             }
             else
             {
-                mainCamera.orthographicSize -= scroll;
-                CCollider.GetComponent<BoxCollider2D>().size -= new Vector2(scroll * 2, scroll * 2);
+                ZoomIn = false;
             }
-        }
-        else
-        {
-            mainCamera.orthographicSize -= scroll;
-            CCollider.GetComponent<BoxCollider2D>().size -= new Vector2(scroll * 2, scroll * 2);
+            if (Input.GetKeyDown(KeyCode.Z) && !ZoomOut)
+            {
+                ZoomOut = true;
+            }
+            else
+            {
+                ZoomOut = false;
+            }
+
+            if (ZoomIn)
+            {
+                ZoomPct -= 0.2f;
+                if (ZoomPct < 0.2f)
+                {
+                    ZoomPct = 0.2f;
+                }
+                UI1.transform.position = CCollider.transform.position + new Vector3(56.5f * ZoomPct + 25 * ZoomPct, 0.0f, 0.0f);
+                UI2.transform.position = CCollider.transform.position - new Vector3(56.5f * ZoomPct + 25 * ZoomPct, 0.0f, 0.0f);
+            }
+            if (ZoomOut)
+            {
+                ZoomPct += 0.2f;
+                if (ZoomPct > 1.0f)
+                {
+                    ZoomPct = 1.0f;
+                }
+                UI1.transform.position = CCollider.transform.position + new Vector3(56.5f * ZoomPct + 25 * ZoomPct, 0.0f, 0.0f);
+                UI2.transform.position = CCollider.transform.position - new Vector3(56.5f * ZoomPct + 25 * ZoomPct, 0.0f, 0.0f);
+            }
+
+            mainCamera.orthographicSize = 56.5f * ZoomPct;
+            UI1.transform.localScale = new Vector3(50 * ZoomPct, 113 * ZoomPct, 1.0f);
+            UI2.transform.localScale = new Vector3(50 * ZoomPct, 113 * ZoomPct, 1.0f);
         }
 
-        if (Input.GetKey(KeyCode.LeftArrow) && !hit_overmap_LEFT)
+        //カメラの移動関係
         {
-            ct.position = ct.position + new Vector3(-0.1f, 0.0f, 0.0f);
-        }
-        else
-        {
-            ct.position = ct.position - new Vector3(-0.1f, 0.0f, 0.0f);
-        }
-        if (Input.GetKey(KeyCode.RightArrow) && !hit_overmap_RIGHT)
-        {
-            ct.position = ct.position + new Vector3(0.1f, 0.0f, 0.0f);
-        }
-        else
-        {
-            ct.position = ct.position - new Vector3(0.1f, 0.0f, 0.0f);
-        }
-        if (Input.GetKey(KeyCode.UpArrow) && !hit_overmap_UP)
-        {
-            ct.position = ct.position + new Vector3(0.0f, 0.1f, 0.0f);
-        }
-        else
-        {
-            ct.position = ct.position - new Vector3(0.0f, 0.1f, 0.0f);
-        }
-        if (Input.GetKey(KeyCode.DownArrow) && !hit_overmap_DOWN)
-        {
-            ct.position = ct.position + new Vector3(0.0f, -0.1f, 0.0f);
-        }
-        else
-        {
-            ct.position = ct.position - new Vector3(0.0f, -0.1f, 0.0f);
+            if (ZoomPct != 1.0f)
+            {
+                float x = 5 - ZoomPct * 5;
+                if (Input.GetKey(KeyCode.LeftArrow))
+                {
+                    ct.position = ct.position + new Vector3(-0.1f, 0.0f, 0.0f);
+                    Debug.Log("左");
+                }
+                if (Input.GetKey(KeyCode.RightArrow))
+                {
+                    ct.position = ct.position + new Vector3(0.1f, 0.0f, 0.0f);
+                    Debug.Log("右");
+                }
+                if (Input.GetKey(KeyCode.UpArrow))
+                {
+                    ct.position = ct.position + new Vector3(0.0f, 0.1f, 0.0f);
+                    Debug.Log("上");
+                }
+                if (Input.GetKey(KeyCode.DownArrow))
+                {
+                    ct.position = ct.position + new Vector3(0.0f, -0.1f, 0.0f);
+                    Debug.Log("下");
+                }
+
+                if (ct.position.x > 0.5f + 11 * x)
+                {
+                    ct.position = new Vector3(0.5f + 11 * x, ct.position.y, ct.position.z);
+                }
+                if (ct.position.x < -0.5f - 11 * x)
+                {
+                    ct.position = new Vector3(-0.5f - 11 * x, ct.position.y, ct.position.z);
+                }
+                if (ct.position.y > 0.5f + 11 * x)
+                {
+                    ct.position = new Vector3(ct.position.x, 0.5f + 11 * x, ct.position.z);
+                }
+                if (ct.position.y < -0.5f - 11 * x)
+                {
+                    ct.position = new Vector3(ct.position.x, -0.5f - 11 * x, ct.position.z);
+                }
+            }
+            else if(ZoomPct == 1.0f)
+            {
+                ct.position -= new Vector3(ct.position.x, ct.position.y, 0.0f);
+            }
         }
     }
 }

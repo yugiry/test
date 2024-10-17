@@ -92,13 +92,10 @@ public class CreateMap : MonoBehaviour
         {
             PUSHSPACE = true;
         }
-        else if (Input.GetKey(KeyCode.Space) && PUSHSPACE)
-        {
-            PUSHSPACE = false;
-        }
 
         if (PUSHSPACE)
         {
+
             if (y < MAPSIZE_Y)
             {
                 SET_X = SetTileStart_X + (TILESIZE_X + TILESPACE) * x;
@@ -119,6 +116,11 @@ public class CreateMap : MonoBehaviour
                         break;
                 }
             }
+            else if (y == MAPSIZE_X && x == 0)
+            {
+                Instantiate(castle1, new Vector3(SetTileStart_X + (TILESIZE_X + TILESPACE) * 22, SetTileStart_Y - (TILESIZE_Y + TILESPACE) * 22, 0.0f), Quaternion.identity);
+                Instantiate(castle2, new Vector3(SetTileStart_X + (TILESIZE_X + TILESPACE) * 2, SetTileStart_Y - (TILESIZE_Y + TILESPACE) * 2, 0.0f), Quaternion.identity);
+            }
             x++;
             if (x >= MAPSIZE_X)
             {
@@ -126,11 +128,6 @@ public class CreateMap : MonoBehaviour
                 y++;
             }
         }
-        else
-        {
-            PUSHSPACE = false;
-        }
-
     }
 }
 
