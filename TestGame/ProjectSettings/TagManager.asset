@@ -4,11 +4,12 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - overmap
-  - overmapUP
-  - overmapDOWN
-  - overmapRIGHT
-  - overmapLEFT
+  - grass
+  - mountain
+  - water
+  - resource
+  - area1
+  - area2
   layers:
   - Default
   - TransparentFX

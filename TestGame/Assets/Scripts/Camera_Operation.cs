@@ -8,6 +8,10 @@ public class Camera_Operation : MonoBehaviour
     public GameObject CCollider;
     public GameObject UI1;
     public GameObject UI2;
+    public GameObject infantry;
+    public GameObject archer;
+    public GameObject catapult;
+
     BoxCollider2D CameraCollider;
     private Camera mainCamera;
     Transform ct;
@@ -54,8 +58,8 @@ public class Camera_Operation : MonoBehaviour
                 {
                     ZoomPct = 0.2f;
                 }
-                UI1.transform.position = CCollider.transform.position + new Vector3(56.5f * ZoomPct + 25 * ZoomPct, 0.0f, 0.0f);
-                UI2.transform.position = CCollider.transform.position - new Vector3(56.5f * ZoomPct + 25 * ZoomPct, 0.0f, 0.0f);
+                UI1.transform.position = CCollider.transform.position + new Vector3(56.5f * ZoomPct + 25 * ZoomPct, 0.0f, 10.0f);
+                UI2.transform.position = CCollider.transform.position - new Vector3(56.5f * ZoomPct + 25 * ZoomPct, 0.0f, -10.0f);
             }
             if (ZoomOut)
             {
@@ -64,8 +68,8 @@ public class Camera_Operation : MonoBehaviour
                 {
                     ZoomPct = 1.0f;
                 }
-                UI1.transform.position = CCollider.transform.position + new Vector3(56.5f * ZoomPct + 25 * ZoomPct, 0.0f, 0.0f);
-                UI2.transform.position = CCollider.transform.position - new Vector3(56.5f * ZoomPct + 25 * ZoomPct, 0.0f, 0.0f);
+                UI1.transform.position = CCollider.transform.position + new Vector3(56.5f * ZoomPct + 25 * ZoomPct, 0.0f, 10.0f);
+                UI2.transform.position = CCollider.transform.position - new Vector3(56.5f * ZoomPct + 25 * ZoomPct, 0.0f, -10.0f);
             }
 
             mainCamera.orthographicSize = 56.5f * ZoomPct;
@@ -99,19 +103,19 @@ public class Camera_Operation : MonoBehaviour
                     Debug.Log("‰º");
                 }
 
-                if (ct.position.x > 0.5f + 11 * x)
+                if (ct.position.x > 0.6f + 11 * x)
                 {
                     ct.position = new Vector3(0.5f + 11 * x, ct.position.y, ct.position.z);
                 }
-                if (ct.position.x < -0.5f - 11 * x)
+                if (ct.position.x < -0.6f - 11 * x)
                 {
                     ct.position = new Vector3(-0.5f - 11 * x, ct.position.y, ct.position.z);
                 }
-                if (ct.position.y > 0.5f + 11 * x)
+                if (ct.position.y > 0.6f + 11 * x)
                 {
                     ct.position = new Vector3(ct.position.x, 0.5f + 11 * x, ct.position.z);
                 }
-                if (ct.position.y < -0.5f - 11 * x)
+                if (ct.position.y < -0.6f - 11 * x)
                 {
                     ct.position = new Vector3(ct.position.x, -0.5f - 11 * x, ct.position.z);
                 }
@@ -121,5 +125,11 @@ public class Camera_Operation : MonoBehaviour
                 ct.position -= new Vector3(ct.position.x, ct.position.y, 0.0f);
             }
         }
+    }
+
+    void Set_UI(GameObject obj, float zoompct)
+    {
+        float x = obj.transform.position.x;
+        obj.transform.position = CCollider.transform.position + new Vector3(x * zoompct, obj.transform.position.y, obj.transform.position.z);
     }
 }
